@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import db.DBConnection;
+import db.DBConnectionFactory;
 import entity.Item;
 import external.TicketMasterAPI;
 
@@ -34,24 +36,27 @@ public class SearchItem extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		double lat = Double.parseDouble(request.getParameter("lat"));
-		double lon = Double.parseDouble(request.getParameter("lon"));
-		
-		String keyword = request.getParameter("term");
-		
-		TicketMasterAPI tmAPI = new TicketMasterAPI();
-		List<Item> items = tmAPI.search(lat, lon, keyword);
-		
 		JSONArray array = new JSONArray();
 		try {
+			double lat = Double.parseDouble(request.getParameter("lat"));
+			double lon = Double.parseDouble(request.getParameter("lon"));
+			
+			String keyword = request.getParameter("term");
+			
+			DBConnection connection = DBConnectionFactory.getConnectin();
+			List<Item> items = connection.searchItems(lat, lon, keyword);
+			connection.close();
+			
 			for(Item item : items) {
 				JSONObject obj = item.toJSONObject();
 				array.put(obj);
 			}
-		} catch (Exception e) {
+			
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+
 		RpcHelper.writeJsonArray(response, array);
 		/**
 		output.println("<html><body>");

@@ -24,7 +24,8 @@ public class Item {
 	public String getAddress() {
 		return address;
 		}
-	public Set<String> getCategories() {return categories;
+	public Set<String> getCategories() {
+		return categories;
 		}
 	public String getImageUrl() {
 		return imageUrl;
